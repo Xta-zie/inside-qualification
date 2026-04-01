@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.gitignore
+pgdata
+.env
+.env.local
+*.md
+.claude
+Thumbs.db
+.DS_Store
