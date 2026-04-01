@@ -90,6 +90,8 @@ export const assessments = pgTable("assessments", {
     enum: ["sysadmin", "architect", "ops"],
   }).notNull(),
   answers: jsonb("answers").notNull().default({}),
+  conductedBy: text("conducted_by").references(() => users.id, { onDelete: "set null" }),
+  conductedByName: text("conducted_by_name"),
   overallScore: integer("overall_score"),
   avgPrereq: real("avg_prereq"),
   avgOpenstack: real("avg_openstack"),

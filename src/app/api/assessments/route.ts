@@ -20,6 +20,8 @@ const createAssessmentSchema = z.object({
   candidateEmail: z.string().email("Invalid email address"),
   targetRole: z.enum(["sysadmin", "architect", "ops"]),
   answers: z.record(z.string(), z.number().min(0).max(5)),
+  conductedBy: z.string().nullable().optional(),
+  conductedByName: z.string().nullable().optional(),
 });
 
 // ---------------------------------------------------------------------------
@@ -108,7 +110,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { candidateName, candidateEmail, targetRole, answers } = parsed.data;
+    const { candidateName, candidateEmail, targetRole, answers, conductedBy, conductedByName } = parsed.data;
 
     // Fetch baseline targets for the target role
     const baseline = await db
@@ -138,6 +140,8 @@ export async function POST(request: NextRequest) {
         candidateEmail,
         targetRole,
         answers,
+        conductedBy: conductedBy ?? null,
+        conductedByName: conductedByName ?? null,
         overallScore,
         avgPrereq,
         avgOpenstack,

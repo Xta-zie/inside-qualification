@@ -413,8 +413,13 @@ export default function DashboardPage() {
                   <td className="whitespace-nowrap px-4 py-3 text-gray-600">
                     {formatDateFR(a.createdAt)}
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
-                    {a.candidateName}
+                  <td className="px-4 py-3">
+                    <span className="font-medium text-gray-900">{a.candidateName}</span>
+                    {a.conductedByName && (
+                      <span className="block text-xs text-gray-400">
+                        par {a.conductedByName}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-gray-600">
                     {a.candidateEmail}

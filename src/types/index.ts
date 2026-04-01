@@ -7,9 +7,9 @@ export type UserRole = "admin" | "manager" | "user";
 export type TargetRole = "sysadmin" | "architect" | "ops";
 
 export const TARGET_ROLE_LABELS: Record<TargetRole, string> = {
-  sysadmin: "Administrateur Systeme",
+  sysadmin: "Administrateur Système",
   architect: "Architecte Cloud",
-  ops: "Operateur Cloud",
+  ops: "Opérateur Cloud",
 };
 
 // ============================================================================
@@ -43,6 +43,8 @@ export interface AssessmentData {
   candidateEmail: string;
   targetRole: TargetRole;
   answers: AnswerMap;
+  conductedBy: string | null;
+  conductedByName: string | null;
   overallScore: number | null;
   avgPrereq: number | null;
   avgOpenstack: number | null;

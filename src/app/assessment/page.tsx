@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import StepRole from "@/components/assessment/StepRole";
 import StepQuiz from "@/components/assessment/StepQuiz";
 import StepReport from "@/components/assessment/StepReport";
@@ -62,6 +63,9 @@ function StepIndicator({ current }: { current: Step }) {
 }
 
 export default function AssessmentPage() {
+  const { data: session } = useSession();
+  const conductor = session?.user ?? null;
+
   // ---- wizard state ----
   const [step, setStep] = useState<Step>(1);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -132,6 +136,8 @@ export default function AssessmentPage() {
             candidateEmail: identity.email,
             targetRole: selectedRole,
             answers,
+            conductedBy: conductor?.id ?? null,
+            conductedByName: conductor?.name ?? null,
           }),
         });
 
@@ -197,6 +203,18 @@ export default function AssessmentPage() {
 
   return (
     <>
+      {/* Conducted mode banner */}
+      {conductor && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-inside-blue/20 bg-inside-blue/5 px-4 py-2.5 text-sm text-inside-blue">
+          <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span>
+            Session encadrée par <strong>{conductor.name ?? conductor.email}</strong>
+          </span>
+        </div>
+      )}
+
       {/* Header bar */}
       <header className="mb-8 flex items-center justify-between rounded-xl border border-gray-200 bg-white px-6 py-4 shadow-sm">
         <div className="flex items-center gap-3">
