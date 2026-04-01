@@ -59,7 +59,7 @@ export default function ScoreGauge({
         >
           <span
             style={{
-              fontFamily: "'Bebas Neue', sans-serif",
+              fontFamily: "var(--font-bebas)",
               fontSize: config.fontSize,
               color: INSIDE_PINK,
               lineHeight: 1,

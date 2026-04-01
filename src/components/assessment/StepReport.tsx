@@ -283,7 +283,7 @@ export default function StepReport({
       <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         {/* Left */}
         <div>
-          <h1 className="font-bebas text-3xl tracking-wide text-inside-blue md:text-4xl">
+          <h1 className="font-display text-3xl tracking-wide text-inside-blue md:text-4xl">
             Rapport d&apos;Audit de Competences
           </h1>
           <p className="mt-1 text-sm text-gray-600">
@@ -303,7 +303,7 @@ export default function StepReport({
         {/* Right – big percentage */}
         <div className="flex-shrink-0 text-right">
           <span
-            className="font-bebas text-6xl leading-none text-inside-pink md:text-7xl"
+            className="font-display text-6xl leading-none text-inside-pink md:text-7xl"
           >
             {overallScore}%
           </span>
@@ -602,7 +602,7 @@ export default function StepReport({
       {/* ================================================================ */}
       <footer className="border-t border-gray-200 pt-4 text-center">
         <p className="text-xs text-gray-400">
-          Genere par INSIDE Academy &bull; Matrice de competence V2.0
+          <img src="/images/logos/academy-picto.png" alt="" className="h-5 w-5 inline-block mr-1" />Genere par INSIDE Academy &bull; Matrice de competence V2.0
         </p>
       </footer>
     </section>

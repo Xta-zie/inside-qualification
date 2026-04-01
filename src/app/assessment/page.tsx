@@ -203,9 +203,7 @@ export default function AssessmentPage() {
       {/* Header bar */}
       <header className="mb-8 flex items-center justify-between rounded-xl border border-gray-200 bg-white px-6 py-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-inside-blue font-bebas text-sm font-bold tracking-wider text-white">
-            IN
-          </div>
+          <img src="/images/logos/inside-blason-couleur.png" alt="INSIDE" className="h-10 w-10" />
           <span className="font-dm-sans text-lg font-semibold text-gray-800">
             INSIDE <span className="font-normal text-gray-500">Qualification</span>
           </span>

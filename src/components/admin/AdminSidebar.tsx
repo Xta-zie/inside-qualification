@@ -61,15 +61,13 @@ export function AdminSidebar({
     <aside className="hidden w-64 flex-col border-r border-gray-200 bg-white md:flex">
       {/* Logo area */}
       <div className="flex h-16 items-center gap-2 border-b border-gray-100 px-6">
-        <span
-          className="text-2xl tracking-wider text-inside-blue"
-          style={{ fontFamily: "var(--font-bebas)" }}
-        >
-          INSIDE
-        </span>
-        <Badge className="bg-inside-pink text-white hover:bg-inside-pink/90 text-[10px]">
-          Admin
-        </Badge>
+        <div className="flex items-center gap-2">
+          <img src="/images/logos/inside-blason-couleur.png" alt="INSIDE" className="h-10 w-10" />
+          <div>
+            <span className="font-bold text-[#00548c]" style={{ fontFamily: "var(--font-display)" }}>INSIDE</span>
+            <span className="ml-2 text-xs bg-[#e31b58] text-white px-2 py-0.5 rounded-full font-bold">Admin</span>
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}

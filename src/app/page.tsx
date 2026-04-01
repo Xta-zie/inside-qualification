@@ -92,19 +92,8 @@ export default function HomePage() {
       {/* ───── NAVBAR ───── */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <Link href="/" className="flex items-baseline gap-1">
-            <span
-              className="text-2xl tracking-wide text-inside-blue"
-              style={{ fontFamily: "var(--font-bebas)" }}
-            >
-              INSIDE
-            </span>
-            <span
-              className="text-lg tracking-wide text-inside-cyan"
-              style={{ fontFamily: "var(--font-bebas)" }}
-            >
-              Academy
-            </span>
+          <Link href="/" className="flex items-center">
+            <img src="/images/logos/academy-horizontal.png" alt="INSIDE Academy" className="h-10" />
           </Link>
 
           <div className="flex items-center gap-3">
@@ -130,9 +119,10 @@ export default function HomePage() {
         <div className="dot-pattern absolute inset-0 pointer-events-none" />
 
         <div className="relative mx-auto max-w-4xl px-6 text-center">
+          <img src="/images/logos/inside-horizontal-blanc.png" alt="INSIDE" className="h-16 mx-auto mb-6 hero-fade-in" />
           <h1
             className="hero-fade-in text-5xl md:text-7xl tracking-wider text-white leading-tight"
-            style={{ fontFamily: "var(--font-bebas)" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             &Eacute;valuez vos comp&eacute;tences
             <br />
@@ -176,7 +166,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-6">
           <h2
             className="text-center text-4xl tracking-wide text-inside-blue mb-4"
-            style={{ fontFamily: "var(--font-bebas)" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             Une &eacute;valuation compl&egrave;te
           </h2>
@@ -193,7 +183,7 @@ export default function HomePage() {
               </div>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-bebas)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 12 Axes de Comp&eacute;tences
               </h3>
@@ -211,7 +201,7 @@ export default function HomePage() {
               </div>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-bebas)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 3 Profils M&eacute;tier
               </h3>
@@ -229,7 +219,7 @@ export default function HomePage() {
               </div>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-bebas)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 Rapport D&eacute;taill&eacute;
               </h3>
@@ -247,7 +237,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-6">
           <h2
             className="text-center text-4xl tracking-wide text-inside-blue mb-4"
-            style={{ fontFamily: "var(--font-bebas)" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             Comment &ccedil;a marche&nbsp;?
           </h2>
@@ -272,7 +262,7 @@ export default function HomePage() {
               </span>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-bebas)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 Identifiez-vous
               </h3>
@@ -295,7 +285,7 @@ export default function HomePage() {
               </span>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-bebas)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 R&eacute;pondez au questionnaire
               </h3>
@@ -318,7 +308,7 @@ export default function HomePage() {
               </span>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-bebas)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 Obtenez votre rapport
               </h3>
@@ -334,20 +324,7 @@ export default function HomePage() {
       {/* ───── FOOTER ───── */}
       <footer className="border-t border-gray-100 bg-white py-10">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 px-6 text-center">
-          <div className="flex items-baseline gap-1.5">
-            <span
-              className="text-xl tracking-wide text-inside-blue"
-              style={{ fontFamily: "var(--font-bebas)" }}
-            >
-              INSIDE
-            </span>
-            <span
-              className="text-base tracking-wide text-inside-cyan"
-              style={{ fontFamily: "var(--font-bebas)" }}
-            >
-              Academy
-            </span>
-          </div>
+          <img src="/images/logos/academy-horizontal.png" alt="INSIDE Academy" className="h-8 mx-auto mb-2" />
           <p className="text-xs text-gray-400">
             Matrice de comp&eacute;tence V2.0
           </p>

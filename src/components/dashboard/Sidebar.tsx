@@ -128,18 +128,7 @@ export function Sidebar({ user }: { user: UserInfo }) {
     <>
       {/* Logo area */}
       <div className="flex h-16 items-center px-6">
-        <span
-          className="text-2xl tracking-wider text-inside-blue"
-          style={{ fontFamily: "var(--font-bebas)" }}
-        >
-          INSIDE
-        </span>
-        <span
-          className="ml-1 text-2xl tracking-wider text-inside-cyan"
-          style={{ fontFamily: "var(--font-bebas)" }}
-        >
-          Academy
-        </span>
+        <img src="/images/logos/academy-horizontal.png" alt="INSIDE Academy" className="h-9" />
       </div>
       <Separator />
 

@@ -15,12 +15,9 @@ function SignInContent() {
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl tracking-wider" style={{ fontFamily: "var(--font-bebas)" }}>
-              <span className="text-[#00548c]">INSIDE</span>{" "}
-              <span className="text-[#6bebf4]">Academy</span>
-            </h1>
-            <div className="w-16 h-0.5 bg-[#e31b58] mx-auto mt-3"></div>
+          <div className="flex flex-col items-center mb-8">
+            <img src="/images/logos/academy-vertical.png" alt="INSIDE Academy" className="h-24 mb-4" />
+            <div className="w-16 h-0.5 bg-[#e31b58] mx-auto"></div>
           </div>
 
           {/* Title */}
