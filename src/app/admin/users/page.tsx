@@ -245,7 +245,6 @@ export default function AdminUsersPage() {
         <div>
           <h1
             className="text-3xl tracking-wider text-inside-blue"
-            style={{ fontFamily: "var(--font-bebas)" }}
           >
             Gestion des Utilisateurs
           </h1>

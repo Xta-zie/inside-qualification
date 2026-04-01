@@ -30,7 +30,7 @@ export default function StepRole({
   return (
     <section className="animate-[fadeIn_0.5s_ease-out] mx-auto max-w-5xl px-4 py-8">
       {/* Step title */}
-      <h2 className="font-bebas mb-8 text-center text-3xl tracking-wide text-inside-blue md:text-4xl">
+      <h2 className="mb-8 text-center text-3xl tracking-wide text-inside-blue md:text-4xl">
         1. Définition du Rôle Cible
       </h2>
 

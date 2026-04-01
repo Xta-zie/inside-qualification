@@ -146,12 +146,13 @@ export default function HomePage() {
         </div>
 
         {/* bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
+        <div className="absolute -bottom-px left-0 right-0">
           <svg
             viewBox="0 0 1440 80"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="block w-full"
+            preserveAspectRatio="none"
           >
             <path
               d="M0 80V40C240 0 480 0 720 40C960 80 1200 80 1440 40V80H0Z"
@@ -166,7 +167,6 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-6">
           <h2
             className="text-center text-4xl tracking-wide text-inside-blue mb-4"
-            style={{ fontFamily: "var(--font-display)" }}
           >
             Une &eacute;valuation compl&egrave;te
           </h2>
@@ -183,7 +183,6 @@ export default function HomePage() {
               </div>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-display)" }}
               >
                 12 Axes de Comp&eacute;tences
               </h3>
@@ -201,7 +200,6 @@ export default function HomePage() {
               </div>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-display)" }}
               >
                 3 Profils M&eacute;tier
               </h3>
@@ -219,7 +217,6 @@ export default function HomePage() {
               </div>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-display)" }}
               >
                 Rapport D&eacute;taill&eacute;
               </h3>
@@ -237,7 +234,6 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-6">
           <h2
             className="text-center text-4xl tracking-wide text-inside-blue mb-4"
-            style={{ fontFamily: "var(--font-display)" }}
           >
             Comment &ccedil;a marche&nbsp;?
           </h2>
@@ -262,7 +258,6 @@ export default function HomePage() {
               </span>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-display)" }}
               >
                 Identifiez-vous
               </h3>
@@ -285,7 +280,6 @@ export default function HomePage() {
               </span>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-display)" }}
               >
                 R&eacute;pondez au questionnaire
               </h3>
@@ -308,7 +302,6 @@ export default function HomePage() {
               </span>
               <h3
                 className="mb-2 text-2xl tracking-wide text-gray-900"
-                style={{ fontFamily: "var(--font-display)" }}
               >
                 Obtenez votre rapport
               </h3>

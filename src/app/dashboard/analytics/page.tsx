@@ -259,7 +259,7 @@ export default function AnalyticsPage() {
       <div>
         <h1
           className="text-3xl tracking-wide"
-          style={{ color: BLUE, fontFamily: "var(--font-bebas)" }}
+          style={{ color: BLUE }}
         >
           Analytiques
         </h1>

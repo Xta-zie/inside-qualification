@@ -58,7 +58,7 @@ export default function StepQuiz({
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="font-bebas text-xl md:text-2xl text-inside-blue tracking-wide">
+            <h2 className="text-xl md:text-2xl text-inside-blue tracking-wide">
               2. Évaluation des Compétences ({progress}%)
             </h2>
             <span className="text-sm font-medium text-gray-500">
@@ -86,14 +86,14 @@ export default function StepQuiz({
               {/* Section headers */}
               {idx === 0 && (
                 <div className="border-l-4 border-inside-pink pl-4 py-2 mb-4">
-                  <h3 className="font-bebas text-lg md:text-xl text-gray-800 tracking-wide">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 tracking-wide">
                     Partie 1 : Prérequis Techniques
                   </h3>
                 </div>
               )}
               {idx === SECTION_BREAK_INDEX && (
                 <div className="border-l-4 border-inside-blue pl-4 py-2 mb-4 mt-8">
-                  <h3 className="font-bebas text-lg md:text-xl text-gray-800 tracking-wide">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 tracking-wide">
                     Partie 2 : Connaissances OpenStack
                   </h3>
                 </div>

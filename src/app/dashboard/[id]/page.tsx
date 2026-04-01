@@ -55,7 +55,7 @@ function Skeleton() {
 function NotFound() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-      <h2 className="font-bebas text-3xl tracking-wide text-inside-blue">
+      <h2 className="text-3xl tracking-wide text-inside-blue">
         Évaluation non trouvée
       </h2>
       <p className="mt-2 text-sm text-gray-500">

@@ -64,7 +64,7 @@ export function AdminSidebar({
         <div className="flex items-center gap-2">
           <img src="/images/logos/inside-blason-couleur.png" alt="INSIDE" className="h-10 w-10" />
           <div>
-            <span className="font-bold text-[#00548c]" style={{ fontFamily: "var(--font-display)" }}>INSIDE</span>
+            <span className="font-bold text-[#00548c]">INSIDE</span>
             <span className="ml-2 text-xs bg-[#e31b58] text-white px-2 py-0.5 rounded-full font-bold">Admin</span>
           </div>
         </div>

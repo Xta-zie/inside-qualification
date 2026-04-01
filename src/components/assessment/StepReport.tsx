@@ -283,7 +283,7 @@ export default function StepReport({
       <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         {/* Left */}
         <div>
-          <h1 className="font-display text-3xl tracking-wide text-inside-blue md:text-4xl">
+          <h1 className="text-3xl tracking-wide text-inside-blue md:text-4xl">
             Rapport d&apos;Audit de Compétences
           </h1>
           <p className="mt-1 text-sm text-gray-600">
