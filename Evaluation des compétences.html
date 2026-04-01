@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INSIDE - OpenStack Skills Gap Analysis</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuration Tailwind avec la charte INSIDE -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        inside: {
+                            black: '#000000',
+                            blue: '#00548c',
+                            pink: '#e31b58',
+                            cyan: '#6bebf4',
+                            purple: '#8883f0',
+                            yellow: '#ffe289'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Lato', 'sans-serif'],
+                        title: ['"DM Sans"', 'sans-serif'],
+                        display: ['"Bebas Neue"', 'sans-serif'] /* Fallback visuel pour Aracne */
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Polices Google (DM Sans, Lato, Bebas Neue en remplacement d'Aracne pour le web) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body { background-color: #f8fafc; color: #000000; font-family: 'Lato', sans-serif; }
+        .font-title { font-family: 'DM Sans', sans-serif; }
+        .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
+        
+        .card { background-color: #ffffff; border: 1px solid #e2e8f0; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card:hover { border-color: #00548c; box-shadow: 0 4px 12px rgba(0,84,140,0.1); }
+        .progress-bar { transition: width 1s ease-in-out; }
+        .animate-fade { animation: fadeIn 0.5s ease-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Print styles */
+        @media print {
+            body { background-color: white; color: black; }
+            .no-print { display: none; }
+            .card { border: 1px solid #ccc; break-inside: avoid; background-color: white; color: black; box-shadow: none; }
+            .print-break { page-break-before: always; }
+            input { border: 1px solid #ccc; background: transparent; color: black; }
+            .bg-gray-50 { background-color: white !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- DATA MATRIX GRANULAIRE (12 axes) ---
+        const baselines = {
+            sysadmin: {
+                label: "Ingénieur Système",
+                desc: "Focus sur l'implémentation, le déploiement et le maintien de la couche basse.",
+                targets: { 
+                    linux_sys: 4, linux_troubleshoot: 3, 
+                    net_l2_l3: 4, net_sdn: 3, 
+                    virt_kvm: 4, 
+                    os_identity: 3, os_compute: 4, os_network: 3, 
+                    storage_block: 4, storage_ceph: 2, 
+                    ops_automation: 3, ops_monitor: 3 
+                }
+            },
+            architect: {
+                label: "Architecte Cloud",
+                desc: "Focus sur le design, le scaling, le choix des composants et l'intégration SI.",
+                targets: { 
+                    linux_sys: 3, linux_troubleshoot: 2, 
+                    net_l2_l3: 4, net_sdn: 4, 
+                    virt_kvm: 3, 
+                    os_identity: 4, os_compute: 4, os_network: 4, 
+                    storage_block: 3, storage_ceph: 4, 
+                    ops_automation: 2, ops_monitor: 2 
+                }
+            },
+            ops: {
+                label: "Ingénieur Production",
+                desc: "Focus sur le MCO, le troubleshooting, le monitoring et la gestion d'incidents.",
+                targets: { 
+                    linux_sys: 4, linux_troubleshoot: 4, 
+                    net_l2_l3: 3, net_sdn: 3, 
+                    virt_kvm: 3, 
+                    os_identity: 3, os_compute: 3, os_network: 3, 
+                    storage_block: 3, storage_ceph: 3, 
+                    ops_automation: 4, ops_monitor: 4 
+                }
+            }
+        };
+
+        const questions = [
+            {
+                id: "linux_sys", category: "1. Administration Système Linux",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je connais les commandes de base (ls, cd, cp, grep).",
+                    "Je gère les paquets, les utilisateurs, les droits (chmod/chown) et les services simples.",
+                    "Je maîtrise systemd (création de services), LVM (étendre un FS à chaud) et le partitionnement.",
+                    "Expert : Je maîtrise les cgroups, les namespaces réseau/process, et l'architecture de boot (GRUB/Initramfs)."
+                ]
+            },
+            {
+                id: "linux_troubleshoot", category: "2. Troubleshooting & Perf Linux",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais utiliser 'top' et lire un fichier dans /var/log/.",
+                    "Je sais utiliser journalctl, dmesg, et interpréter la charge CPU/RAM basique.",
+                    "Je maîtrise strace, tcpdump, lsof, iostat et je peux isoler un problème d'I/O Wait ou de swap.",
+                    "Expert : J'analyse des Kernel Panics, j'utilise perf/eBPF, et je tune les paramètres sysctl avancés."
+                ]
+            },
+            {
+                id: "net_l2_l3", category: "3. Réseau L2/L3 & Datacenter",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je connais la différence entre une adresse IP, un masque et une passerelle.",
+                    "Je sais configurer des VLANs, du Bonding (LACP) et du routage statique sous Linux.",
+                    "Je maîtrise le routage dynamique basique et les concepts de filtrage (iptables/nftables).",
+                    "Expert : Je design et dépanne des architectures de fabric Datacenter (BGP EVPN, Spine-Leaf)."
+                ]
+            },
+            {
+                id: "net_sdn", category: "4. SDN & Open vSwitch (OVS)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je comprends le concept de switch virtuel.",
+                    "Je sais créer un pont OVS (ovs-vsctl) et y attacher des interfaces.",
+                    "Je maîtrise les encapsulations (VXLAN, Geneve) et je sais lire les tables de flux OVS (ovs-ofctl).",
+                    "Expert : Je dépanne des flux complexes, des problèmes de MTU dans les tunnels et je connais DPDK/SmartNICs."
+                ]
+            },
+            {
+                id: "virt_kvm", category: "5. Virtualisation (KVM / Libvirt)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais ce qu'est un hyperviseur et une machine virtuelle.",
+                    "J'ai déjà créé des VMs sous KVM via une interface graphique (Virt-Manager).",
+                    "Je maîtrise Libvirt (virsh, édition de XML), les formats qcow2, et la gestion des snapshots.",
+                    "Expert : Je maîtrise le Passthrough PCI/GPU, le CPU Pinning, la topologie NUMA et la live-migration bas niveau."
+                ]
+            },
+            {
+                id: "os_identity", category: "6. OpenStack : Identity (Keystone)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais que Keystone gère les mots de passe et les tokens.",
+                    "Je sais créer des utilisateurs, des projets et assigner des rôles via la CLI (openstack user create).",
+                    "Je comprends le catalogue de services, les endpoints, et les concepts de Domaines.",
+                    "Expert : Je gère la fédération d'identité (SAML/OIDC), j'audite les policies (policy.json) et je debug les tokens Fernet."
+                ]
+            },
+            {
+                id: "os_compute", category: "7. OpenStack : Compute (Nova & Glance)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais lancer une instance (VM) depuis le dashboard Horizon.",
+                    "Je sais créer des Flavors, gérer des images Glance et démarrer des VMs via la CLI.",
+                    "Je comprends l'architecture Nova (API, Conductor, Scheduler, Compute) et le placement (Host Aggregates).",
+                    "Expert : Je debug des échecs de scheduling, je gère l'architecture Cell V2, et j'interviens dans la DB Nova."
+                ]
+            },
+            {
+                id: "os_network", category: "8. OpenStack : Network (Neutron)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais associer une Floating IP et gérer les règles de Security Groups depuis Horizon.",
+                    "Je sais créer des réseaux Provider et Tenant (Self-service), ainsi que des routeurs via la CLI.",
+                    "Je comprends où sont instanciés les routeurs virtuels (qrouter namespaces), le rôle de DHCP agent et L3 agent.",
+                    "Expert : Je maîtrise l'architecture Distributed Virtual Router (DVR), le L3 HA, et la migration vers OVN."
+                ]
+            },
+            {
+                id: "storage_block", category: "9. Stockage Bloc & Objet (Cinder/Swift)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais attacher un volume à une instance OpenStack.",
+                    "Je sais créer des types de volumes (Volume Types) et utiliser LVM comme backend Cinder.",
+                    "Je gère des backends multiples, les snapshots Cinder, et je comprends le fonctionnement de Swift (Objet).",
+                    "Expert : Je dépanne les problèmes de multipathing iSCSI/Fibre Channel entre le compute et la baie de stockage."
+                ]
+            },
+            {
+                id: "storage_ceph", category: "10. Stockage Distribué (Ceph)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je connais le nom Ceph et je sais qu'il permet de stocker des données.",
+                    "Je sais vérifier l'état d'un cluster Ceph (ceph -s) et comprendre les concepts OSD / MON.",
+                    "Je maîtrise la création de pools, la CRUSH map, et l'intégration native avec Cinder/Glance.",
+                    "Expert : Je gère les recoveries complexes (PGs inconsistent/stale), le tuning de perf IOPS et l'ajout de nœuds à chaud."
+                ]
+            },
+            {
+                id: "ops_automation", category: "11. Automatisation (Ansible & IaC)",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais écrire un script Bash séquentiel simple.",
+                    "Je sais écrire un playbook Ansible basique pour installer des paquets et pousser des templates.",
+                    "Je maîtrise les Roles, les Variables/Facts, et l'utilisation de modules OpenStack dans Ansible.",
+                    "Expert : Je déploie OpenStack via Kolla-Ansible / OpenStack-Ansible, j'écris des modules custom et je gère l'IaC via CI/CD."
+                ]
+            },
+            {
+                id: "ops_monitor", category: "12. Opérations & Supervision",
+                levels: [
+                    "Je ne connais pas du tout ou je n'ai aucune compétence.",
+                    "Je sais regarder un dashboard Grafana ou Zabbix.",
+                    "Je sais configurer des alertes simples et gérer l'arrêt/relance propre de services (RabbitMQ, MariaDB).",
+                    "Je maîtrise la stack ELK pour corréler les logs OpenStack, le tracing RabbitMQ, et Galera Cluster.",
+                    "Expert : Je mets en place de l'auto-remédiation, du Chaos Engineering et un Plan de Reprise d'Activité (PRA) complet."
+                ]
+            }
+        ];
+
+        // Mapping des clés vers un ID de module pour la déduplication
+        const categoryToModule = {
+            linux_sys: 'mod_linux', linux_troubleshoot: 'mod_linux',
+            net_l2_l3: 'mod_net', net_sdn: 'mod_net',
+            virt_kvm: 'mod_virt',
+            os_identity: 'mod_os_core', os_compute: 'mod_os_core',
+            os_network: 'mod_os_net',
+            storage_block: 'mod_storage', storage_ceph: 'mod_storage',
+            ops_automation: 'mod_ops', ops_monitor: 'mod_ops'
+        };
+
+        // Liste des modules de formation avec fournisseurs
+        const trainingModules = {
+            mod_linux: { 
+                title: "Administration Linux Avancée & Perf", 
+                content: "Maîtrise des Namespaces, Cgroups, Kernel Tuning, Systemd et outils de troubleshooting.",
+                providers: [
+                    { name: "Red Hat", type: "Certifiant", detail: "RHCSA / RHCE Certification Track" },
+                    { name: "Udemy", type: "E-learning", detail: "Linux Kernel Internals & Debugging" }
+                ]
+            },
+            mod_net: { 
+                title: "Réseaux Datacenter, SDN & OVS", 
+                content: "Routage avancé, VXLAN, intégration Open vSwitch et SDN bas niveau.",
+                providers: [
+                    { name: "Red Hat", type: "Expert", detail: "CL310 - OpenStack Networking & NFV" },
+                    { name: "Udemy", type: "E-learning", detail: "Open vSwitch & SDN Fundamentals" }
+                ]
+            },
+            mod_virt: { 
+                title: "Virtualisation KVM Under the Hood", 
+                content: "Architecture Libvirt/QEMU, XML editing, optimisation NUMA et PCI Passthrough.",
+                providers: [
+                    { name: "Red Hat", type: "Spécialisation", detail: "RH318 - Red Hat Virtualization" },
+                    { name: "Udemy", type: "E-learning", detail: "KVM Hypervisor Masterclass" }
+                ]
+            },
+            mod_os_core: { 
+                title: "OpenStack Core : Compute & Identity", 
+                content: "Architecture distribuée de Nova et Keystone, debugging RPC, politiques d'accès.",
+                providers: [
+                    { name: "Red Hat", type: "Reference", detail: "CL210 - Red Hat OpenStack Administration II" },
+                    { name: "Udemy", type: "E-learning", detail: "OpenStack Fundamentals & Architecture" }
+                ]
+            },
+            mod_os_net: { 
+                title: "OpenStack Neutron & Architecture Réseau", 
+                content: "Gestion des agents DHCP/L3, routeurs virtuels, DVR et dépannage des flux.",
+                providers: [
+                    { name: "Red Hat", type: "Expert", detail: "CL310 - OpenStack Networking" },
+                    { name: "Udemy", type: "E-learning", detail: "OpenStack Neutron Deep Dive" }
+                ]
+            },
+            mod_storage: { 
+                title: "Ceph & Stockage Cloud", 
+                content: "Administration Ceph (CRUSH map, OSDs), intégration Cinder LVM/Ceph et dépannage.",
+                providers: [
+                    { name: "Red Hat", type: "Expert", detail: "CEPH125 - Red Hat Ceph Storage" },
+                    { name: "Udemy", type: "E-learning", detail: "Ceph Cluster Administration" }
+                ]
+            },
+            mod_ops: { 
+                title: "Automatisation, Ansible & Opérations", 
+                content: "Ansible pour le Cloud (Kolla), gestion des clusters Galera/RabbitMQ, et supervision avancée.",
+                providers: [
+                    { name: "Red Hat", type: "Automation", detail: "DO407 - Automation with Ansible" },
+                    { name: "Udemy", type: "E-learning", detail: "Ansible for DevOps & OpenStack Operators" }
+                ]
+            }
+        };
+
+        const formatLabel = (key) => {
+            const labels = {
+                linux_sys: "Linux (Système)", linux_troubleshoot: "Linux (Troubleshoot)",
+                net_l2_l3: "Réseau (L2/L3)", net_sdn: "Réseau (SDN)",
+                virt_kvm: "Virtualisation (KVM)",
+                os_identity: "OpenStack (Keystone)", os_compute: "OpenStack (Nova)", os_network: "OpenStack (Neutron)",
+                storage_block: "Stockage (Cinder)", storage_ceph: "Stockage (Ceph)",
+                ops_automation: "Automatisation (Ansible)", ops_monitor: "Supervision (Ops)"
+            };
+            return labels[key] || key;
+        };
+
+        // --- COMPONENTS ---
+
+        const StepRole = ({ onSelect, identity, setIdentity }) => {
+            const isValid = identity.name.trim() !== '' && identity.email.trim() !== '';
+
+            return (
+                <div className="animate-fade max-w-5xl mx-auto">
+                    
+                    {/* Identity Section */}
+                    <div className="bg-white p-6 rounded-xl border-l-4 border-inside-blue shadow-sm mb-8">
+                        <h2 className="text-xl font-title font-bold text-inside-blue mb-4 flex items-center gap-2">
+                            <i className="fa-solid fa-user-circle text-inside-cyan"></i> Identification du Candidat
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-bold text-gray-600 mb-1">Nom Complet</label>
+                                <input 
+                                    type="text" 
+                                    value={identity.name}
+                                    onChange={(e) => setIdentity({...identity, name: e.target.value})}
+                                    placeholder="ex: Jean Dupont"
+                                    className="w-full bg-gray-50 border border-gray-300 rounded px-4 py-2 text-inside-black focus:border-inside-pink focus:ring-1 focus:ring-inside-pink focus:outline-none transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-600 mb-1">Adresse Email</label>
+                                <input 
+                                    type="email" 
+                                    value={identity.email}
+                                    onChange={(e) => setIdentity({...identity, email: e.target.value})}
+                                    placeholder="ex: j.dupont@entreprise.com"
+                                    className="w-full bg-gray-50 border border-gray-300 rounded px-4 py-2 text-inside-black focus:border-inside-pink focus:ring-1 focus:ring-inside-pink focus:outline-none transition-colors"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h1 className="text-3xl font-title font-bold text-center mb-2 text-inside-blue">1. Définition du Rôle Cible</h1>
+                    <p className="text-center text-gray-600 mb-10">Pour quel poste souhaitez-vous évaluer vos compétences ?</p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                        {!isValid && (
+                            <div className="absolute inset-0 bg-white/70 z-10 flex items-center justify-center rounded-xl backdrop-blur-sm">
+                                <div className="text-center p-6 bg-white border border-gray-200 shadow-lg rounded-xl">
+                                    <i className="fa-solid fa-lock text-4xl text-inside-pink mb-3"></i>
+                                    <p className="text-inside-black font-bold font-title">Veuillez renseigner votre identité<br/>pour déverrouiller le choix du rôle.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {Object.entries(baselines).map(([key, role]) => (
+                            <div key={key} onClick={() => isValid && onSelect(key)} className={`card p-6 rounded-xl cursor-pointer relative group ${isValid ? 'hover:border-inside-pink' : 'opacity-50'}`}>
+                                <div className="absolute top-4 right-4 text-gray-300 group-hover:text-inside-pink transition-colors"><i className="fa-solid fa-crosshairs fa-xl"></i></div>
+                                <h3 className="text-xl font-title font-bold text-inside-blue mb-2">{role.label}</h3>
+                                <p className="text-sm text-gray-600 mb-4 h-16">{role.desc}</p>
+                                <div className="text-xs text-inside-purple uppercase font-bold tracking-wider mb-2 border-t border-gray-100 pt-3">Baseline requise :</div>
+                                <ul className="space-y-1">
+                                    <li className="flex justify-between text-xs text-gray-500 font-medium">
+                                        <span>Exigences Techniques</span>
+                                        <span className="text-inside-black font-bold bg-gray-100 px-2 rounded-full">{Object.keys(role.targets).length} axes</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const StepQuiz = ({ questions, answers, setAnswers, onFinish }) => {
+            const handleSelect = (qId, level) => {
+                setAnswers({ ...answers, [qId]: level });
+            };
+
+            const isComplete = questions.every(q => answers[q.id] !== undefined);
+            const progress = Math.round((Object.keys(answers).length / questions.length) * 100);
+
+            return (
+                <div className="animate-fade max-w-4xl mx-auto pb-20">
+                    <div className="sticky top-0 bg-gray-50/90 backdrop-blur pt-4 pb-6 z-10 border-b border-gray-200 mb-8">
+                        <h1 className="text-3xl font-title font-bold text-center mb-4 text-inside-blue">2. Évaluation des Compétences ({progress}%)</h1>
+                        <div className="w-full max-w-2xl mx-auto bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <div className="bg-inside-cyan h-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        {questions.map((q, idx) => (
+                            <React.Fragment key={q.id}>
+                                {/* En-tête Partie 1 */}
+                                {idx === 0 && (
+                                    <div className="mb-6 mt-2 border-l-4 border-inside-pink pl-4">
+                                        <h2 className="text-2xl font-title font-bold text-inside-pink">Partie 1 : Prérequis Techniques</h2>
+                                        <p className="text-gray-500 font-medium">Compétences socles nécessaires avant d'aborder le Cloud.</p>
+                                    </div>
+                                )}
+                                
+                                {/* En-tête Partie 2 */}
+                                {idx === 5 && (
+                                    <div className="mb-6 mt-12 border-l-4 border-inside-blue pl-4">
+                                        <h2 className="text-2xl font-title font-bold text-inside-blue">Partie 2 : Connaissances OpenStack</h2>
+                                        <p className="text-gray-500 font-medium">Maitrise des composants et de l'architecture du Cloud.</p>
+                                    </div>
+                                )}
+
+                                <div className="card p-6 rounded-xl scroll-mt-24 mb-8" id={`q-${idx}`}>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className={`text-white w-8 h-8 flex items-center justify-center rounded-full font-title font-bold text-sm shrink-0 shadow-sm ${idx < 5 ? 'bg-inside-pink' : 'bg-inside-blue'}`}>{idx + 1}</span>
+                                        <h3 className="text-lg font-title font-bold text-inside-black">{q.category}</h3>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {q.levels.map((text, level) => (
+                                            <div 
+                                                key={level} 
+                                                onClick={() => {
+                                                    handleSelect(q.id, level);
+                                                    if (idx < questions.length - 1) {
+                                                       setTimeout(() => document.getElementById(`q-${idx+1}`)?.scrollIntoView({behavior: 'smooth', block: 'center'}), 300);
+                                                    }
+                                                }}
+                                                className={`p-4 rounded-lg border cursor-pointer flex items-start gap-3 transition-all
+                                                    ${answers[q.id] === level 
+                                                        ? 'bg-inside-cyan/10 border-inside-cyan text-inside-black shadow-sm' 
+                                                        : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'}`}
+                                            >
+                                                <div className={`mt-1 w-4 h-4 rounded-full border flex-shrink-0 transition-colors ${answers[q.id] === level ? 'bg-inside-cyan border-inside-cyan' : 'border-gray-400 bg-white'}`}></div>
+                                                <div>
+                                                    <span className={`text-xs font-bold uppercase block mb-1 ${answers[q.id] === level ? 'text-inside-blue' : 'text-gray-500'}`}>
+                                                        {level === 0 ? 'Niveau 0' : `Niveau ${level}`}
+                                                    </span>
+                                                    <span className={`text-sm ${answers[q.id] === level ? 'font-medium' : ''}`}>{text}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </React.Fragment>
+                        ))}
+                    </div>
+
+                    <div className="mt-12 flex justify-center sticky bottom-6 z-10">
+                        <button 
+                            onClick={onFinish} 
+                            disabled={!isComplete}
+                            className={`px-8 py-4 rounded-full font-title font-bold text-lg flex items-center gap-3 shadow-lg transition-all
+                                ${isComplete ? 'bg-inside-pink hover:bg-opacity-90 text-white cursor-pointer shadow-inside-pink/30 translate-y-0' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                        >
+                            Générer le rapport <i className="fa-solid fa-chart-pie"></i>
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const StepReport = ({ roleKey, answers, identity, onReset }) => {
+            const role = baselines[roleKey];
+            
+            const analysis = Object.keys(role.targets).map(key => {
+                const target = role.targets[key];
+                const current = answers[key] || 0;
+                const delta = target - current;
+                return { key, target, current, delta };
+            });
+
+            const gaps = analysis.filter(item => item.delta > 0);
+            const moduleIdsToRecommend = Array.from(new Set(gaps.map(gap => categoryToModule[gap.key])));
+            
+            // Global match calculation (gap vs target)
+            const totalTarget = analysis.reduce((acc, curr) => acc + curr.target, 0);
+            const totalCurrent = analysis.reduce((acc, curr) => acc + curr.current, 0);
+            const percent = Math.min(100, Math.round((totalCurrent / totalTarget) * 100));
+
+            // --- NOUVELLE LOGIQUE : NIVEAUX MOYENS (0 à 4) ---
+            const prereqKeys = ['linux_sys', 'linux_troubleshoot', 'net_l2_l3', 'net_sdn', 'virt_kvm'];
+            const osKeys = ['os_identity', 'os_compute', 'os_network', 'storage_block', 'storage_ceph', 'ops_automation', 'ops_monitor'];
+
+            const calculateAverageLevel = (keys) => {
+                if (keys.length === 0) return 0;
+                let sum = 0;
+                keys.forEach(k => sum += (answers[k] || 0));
+                return (sum / keys.length).toFixed(1);
+            };
+
+            const avgPrereq = parseFloat(calculateAverageLevel(prereqKeys));
+            const avgOS = parseFloat(calculateAverageLevel(osKeys));
+
+            let statusPrereq = { text: "EN ATTENTE", bg: "bg-gray-200", textCol: "text-gray-600" };
+            let statusOS = { text: "EN ATTENTE", bg: "bg-gray-200", textCol: "text-gray-600" };
+            let recTextPrereq = "";
+            let recTextOS = "";
+
+            // Logique de niveaux pour Prérequis
+            if (avgPrereq < 2.0) { // Niveaux 0 et 1 dominants
+                statusPrereq = { text: "BLOQUANT (Niveau insuffisant)", bg: "bg-inside-pink/10 border border-inside-pink/30", textCol: "text-inside-pink" };
+                recTextPrereq = "<strong>Prérequis Techniques :</strong> <span class='text-inside-pink font-bold'>Bloquant.</span> Priorité absolue sur la formation socle Linux et Réseau avant de pouvoir aborder le Cloud.";
+            } else if (avgPrereq < 3.0) { // Niveau 2 dominant
+                statusPrereq = { text: "CONSOLIDATION NÉCESSAIRE", bg: "bg-inside-yellow/40 border border-inside-yellow", textCol: "text-inside-black" };
+                recTextPrereq = "<strong>Prérequis Techniques :</strong> <span class='text-yellow-700 font-bold'>À consolider.</span> Le socle est moyen. Une remise à niveau est conseillée en parallèle du parcours Cloud.";
+            } else { // Niveaux 3 et 4 dominants
+                statusPrereq = { text: "VALIDÉ (Niveau suffisant)", bg: "bg-green-100 border border-green-200", textCol: "text-green-700" };
+                recTextPrereq = "<strong>Prérequis Techniques :</strong> <span class='text-green-600 font-bold'>Validé.</span> Le socle technique est solide. Prêt pour l'environnement Cloud.";
+            }
+
+            // Logique de niveaux pour OpenStack
+            if (avgOS < 1.5) {
+                statusOS = { text: "DÉBUTANT", bg: "bg-gray-200 border border-gray-300", textCol: "text-gray-600" };
+                recTextOS = "<strong>OpenStack :</strong> Prêt pour une formation d'initiation complète aux services et architectures du Cloud.";
+            } else if (avgOS < 3.0) {
+                statusOS = { text: "INTERMÉDIAIRE", bg: "bg-inside-cyan/20 border border-inside-cyan/40", textCol: "text-inside-blue" };
+                recTextOS = "<strong>OpenStack :</strong> Connaissances existantes. Focus recommandé sur l'architecture avancée et le troubleshooting métier.";
+            } else {
+                statusOS = { text: "AVANCÉ", bg: "bg-green-100 border border-green-200", textCol: "text-green-700" };
+                recTextOS = "<strong>OpenStack :</strong> Profil opérationnel solide. Orientation vers le design d'infrastructure complexe et l'automatisation avancée.";
+            }
+
+            const handleSendEmail = () => {
+                const subject = `Rapport Audit OpenStack - ${identity.name}`;
+                let body = `Bonjour,\n\nVoici le résultat de l'audit de compétences OpenStack.\n\n`;
+                body += `Candidat : ${identity.name}\n`;
+                body += `Email : ${identity.email}\n`;
+                body += `Rôle visé : ${role.label}\n`;
+                body += `Adéquation globale (vs cibles métier) : ${percent}%\n\n`;
+
+                body += `--- SYNTHÈSE CLOUD ---\n`;
+                body += `Prérequis (Linux, Réseau, Virt) : Niveau moyen ${avgPrereq}/4 - Statut : ${statusPrereq.text}\n`;
+                body += `Baseline OpenStack : Niveau moyen ${avgOS}/4 - Statut : ${statusOS.text}\n`;
+                body += `Recommandation :\n- ${recTextPrereq.replace(/<[^>]+>/g, '')}\n- ${recTextOS.replace(/<[^>]+>/g, '')}\n\n`;
+                
+                body += `--- DÉTAIL DES ÉCARTS (MÉTIER) ---\n`;
+                gaps.forEach(gap => {
+                     body += `[${formatLabel(gap.key)}] Cible attendue: ${gap.target} / Actuel: ${gap.current} (Déficit: ${gap.delta})\n`;
+                });
+                
+                if(gaps.length === 0) body += "Aucun déficit identifié sur le profil visé.\n";
+
+                body += `\n--- FORMATIONS RECOMMANDÉES ---\n`;
+                moduleIdsToRecommend.forEach(modId => {
+                    const mod = trainingModules[modId];
+                    body += `\n# ${mod.title}\n`;
+                    mod.providers.forEach(p => {
+                         body += `  - ${p.name} (${p.type}) : ${p.detail}\n`;
+                    });
+                });
+
+                body += `\nCordialement,\n${identity.name}`;
+
+                window.location.href = `mailto:${identity.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            };
+
+            return (
+                <div className="animate-fade max-w-6xl mx-auto pb-20">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-gray-200 pb-4 gap-4">
+                        <div>
+                            <h1 className="text-3xl font-title font-bold text-inside-blue">Rapport d'Audit de Compétences</h1>
+                            <p className="text-gray-600 mt-2">Candidat : <span className="text-inside-black font-bold">{identity.name}</span></p>
+                            <p className="text-gray-600">Email : <span className="text-inside-black">{identity.email}</span></p>
+                            <p className="text-gray-600">Profil cible : <span className="text-inside-cyan font-bold">{role.label}</span></p>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-6xl font-display text-inside-pink mb-1">{percent}%</div>
+                            <div className="text-xs text-gray-500 font-bold uppercase tracking-wide">Adéquation globale (vs Rôle)</div>
+                        </div>
+                    </div>
+
+                    {/* --- SECTION : ÉVALUATION DES COMPÉTENCES (Niveaux) --- */}
+                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
+                        <h2 className="text-2xl font-title font-bold text-inside-blue border-b-2 border-inside-cyan pb-2 mb-6">Évaluation des Niveaux de Compétences</h2>
+                        
+                        <div className="flex flex-col md:flex-row gap-6">
+                            {/* Carte Prérequis */}
+                            <div className="flex-1 bg-gray-50 p-5 rounded-lg border-l-4 border-inside-pink shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-3 opacity-10"><i className="fa-solid fa-server text-6xl"></i></div>
+                                <h3 className="text-lg font-title font-bold text-inside-pink mb-1 relative z-10">Partie 1 : Prérequis Techniques</h3>
+                                <p className="text-sm text-gray-500 mb-4 relative z-10">Linux, Réseau (OSI, VLAN), Virtualisation (KVM).</p>
+                                <div className="text-3xl font-display text-inside-black mb-4 relative z-10">
+                                    Niveau Moyen : <span className="text-inside-pink">{avgPrereq}</span> <span className="text-xl text-gray-400">/ 4</span>
+                                </div>
+                                <div className={`p-2 rounded font-bold text-sm text-center tracking-wide relative z-10 ${statusPrereq.bg} ${statusPrereq.textCol}`}>
+                                    {statusPrereq.text}
+                                </div>
+                            </div>
+
+                            {/* Carte OpenStack */}
+                            <div className="flex-1 bg-gray-50 p-5 rounded-lg border-l-4 border-inside-blue shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-3 opacity-10"><i className="fa-solid fa-cloud text-6xl"></i></div>
+                                <h3 className="text-lg font-title font-bold text-inside-blue mb-1 relative z-10">Partie 2 : Baseline OpenStack</h3>
+                                <p className="text-sm text-gray-500 mb-4 relative z-10">Architecture (Nova, Neutron, Keystone), CLI, Opérations.</p>
+                                <div className="text-3xl font-display text-inside-black mb-4 relative z-10">
+                                    Niveau Moyen : <span className="text-inside-blue">{avgOS}</span> <span className="text-xl text-gray-400">/ 4</span>
+                                </div>
+                                <div className={`p-2 rounded font-bold text-sm text-center tracking-wide relative z-10 ${statusOS.bg} ${statusOS.textCol}`}>
+                                    {statusOS.text}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Boîte de recommandation */}
+                        <div className="mt-6 p-5 bg-gray-50 rounded-lg border border-gray-200 shadow-inner">
+                            <h4 className="font-title font-bold text-inside-blue mb-3 border-b border-gray-200 pb-2"><i className="fa-solid fa-compass text-inside-cyan mr-2"></i>Synthèse & Plan d'accompagnement préconisé :</h4>
+                            <p className="text-sm text-gray-700 font-medium mb-2" dangerouslySetInnerHTML={{ __html: recTextPrereq }}></p>
+                            <p className="text-sm text-gray-700 font-medium" dangerouslySetInnerHTML={{ __html: recTextOS }}></p>
+                        </div>
+                    </div>
+                    {/* --- FIN SECTION --- */}
+
+                    {/* LÉGENDE DU GRAPHIQUE */}
+                    <div className="flex items-center justify-center gap-6 mb-6 text-xs font-bold text-gray-600 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-inside-blue rounded-sm"></div> Niveau Acquis</div>
+                        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-inside-pink rounded-sm opacity-80"></div> Déficit (à combler)</div>
+                        <div className="flex items-center gap-2"><div className="w-1.5 h-4 bg-inside-black rounded-sm"></div> Cible Attendue</div>
+                    </div>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-12">
+                        {/* CHART VISUALIZATION DIVISÉ EN DEUX PARTIES */}
+                        <div className="flex flex-col gap-6">
+                            
+                            {/* SECTION PREREQUIS */}
+                            <div className="card p-6 rounded-xl border-t-4 border-t-inside-pink">
+                                <h3 className="text-xl font-title font-bold mb-4 text-inside-pink border-b border-gray-100 pb-2">
+                                    <i className="fa-solid fa-server mr-2"></i>Détail Partie 1 : Prérequis (Cible métier)
+                                </h3>
+                                <div className="grid grid-cols-1 gap-y-6">
+                                    {analysis.filter(i => prereqKeys.includes(i.key)).map((item) => (
+                                        <div key={item.key} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <div className="flex justify-between text-xs mb-2">
+                                                <span className="font-bold text-inside-black text-sm">{formatLabel(item.key)}</span>
+                                                <span className="text-gray-500 font-medium">
+                                                    Niv. <span className="text-inside-blue font-bold text-sm">{item.current}</span> / Cible : {item.target}
+                                                </span>
+                                            </div>
+                                            <div className="relative h-3 w-full bg-gray-200 rounded-full overflow-hidden flex items-center">
+                                                {/* Niveau Actuel */}
+                                                <div style={{ width: `${(item.current / 4) * 100}%` }} className="h-full bg-inside-blue"></div>
+                                                {/* Déficit (remplit exactement la zone jusqu'à la cible) */}
+                                                {item.delta > 0 && (
+                                                    <div style={{ width: `${(item.delta / 4) * 100}%` }} className="h-full bg-inside-pink opacity-80"></div>
+                                                )}
+                                                {/* Curseur Noir - Cible */}
+                                                {item.target > 0 && (
+                                                    <div 
+                                                        className="absolute top-0 bottom-0 w-[3px] bg-inside-black z-10 rounded-full" 
+                                                        style={{ left: `calc(${(item.target / 4) * 100}% - 1px)` }}
+                                                    ></div>
+                                                )}
+                                            </div>
+                                            <div className="mt-2 flex justify-between items-center">
+                                                {item.delta > 0 ? (
+                                                    <p className="text-[10px] text-inside-pink uppercase font-bold">Déficit : {item.delta} niveau(x)</p>
+                                                ) : (
+                                                    <p className="text-[10px] text-inside-blue uppercase font-bold">
+                                                        {item.current > item.target ? '✓ Surpasse la cible' : '✓ Cible atteinte'}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* SECTION OPENSTACK */}
+                            <div className="card p-6 rounded-xl border-t-4 border-t-inside-blue">
+                                <h3 className="text-xl font-title font-bold mb-4 text-inside-blue border-b border-gray-100 pb-2">
+                                    <i className="fa-solid fa-cloud mr-2"></i>Détail Partie 2 : OpenStack (Cible métier)
+                                </h3>
+                                <div className="grid grid-cols-1 gap-y-6">
+                                    {analysis.filter(i => osKeys.includes(i.key)).map((item) => (
+                                        <div key={item.key} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <div className="flex justify-between text-xs mb-2">
+                                                <span className="font-bold text-inside-black text-sm">{formatLabel(item.key)}</span>
+                                                <span className="text-gray-500 font-medium">
+                                                    Niv. <span className="text-inside-blue font-bold text-sm">{item.current}</span> / Cible : {item.target}
+                                                </span>
+                                            </div>
+                                            <div className="relative h-3 w-full bg-gray-200 rounded-full overflow-hidden flex items-center">
+                                                {/* Niveau Actuel */}
+                                                <div style={{ width: `${(item.current / 4) * 100}%` }} className="h-full bg-inside-blue"></div>
+                                                {/* Déficit (remplit exactement la zone jusqu'à la cible) */}
+                                                {item.delta > 0 && (
+                                                    <div style={{ width: `${(item.delta / 4) * 100}%` }} className="h-full bg-inside-pink opacity-80"></div>
+                                                )}
+                                                {/* Curseur Noir - Cible */}
+                                                {item.target > 0 && (
+                                                    <div 
+                                                        className="absolute top-0 bottom-0 w-[3px] bg-inside-black z-10 rounded-full" 
+                                                        style={{ left: `calc(${(item.target / 4) * 100}% - 1px)` }}
+                                                    ></div>
+                                                )}
+                                            </div>
+                                            <div className="mt-2 flex justify-between items-center">
+                                                {item.delta > 0 ? (
+                                                    <p className="text-[10px] text-inside-pink uppercase font-bold">Déficit : {item.delta} niveau(x)</p>
+                                                ) : (
+                                                    <p className="text-[10px] text-inside-blue uppercase font-bold">
+                                                        {item.current > item.target ? '✓ Surpasse la cible' : '✓ Cible atteinte'}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RECOMMENDATION ENGINE */}
+                        <div className="card p-6 rounded-xl border-t-4 border-t-inside-blue xl:border-t-0 xl:border-l-4 xl:border-l-inside-blue">
+                            <h3 className="text-xl font-title font-bold mb-6 text-inside-blue border-b border-gray-100 pb-3">
+                                <i className="fa-solid fa-graduation-cap mr-2 text-inside-cyan"></i>Plan de Montée en Compétences
+                            </h3>
+                            
+                            {gaps.length === 0 ? (
+                                <div className="h-full flex flex-col items-center justify-center text-center p-6">
+                                    <div className="w-20 h-20 bg-inside-cyan/20 text-inside-blue rounded-full flex items-center justify-center text-4xl mb-4">
+                                        <i className="fa-solid fa-check"></i>
+                                    </div>
+                                    <h4 className="text-3xl font-display text-inside-blue tracking-wide">Profil Parfait !</h4>
+                                    <p className="text-gray-600 mt-2 font-medium">Le candidat possède tous les pré-requis nécessaires pour le rôle de {role.label}.</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <p className="text-sm text-gray-600 mb-4 font-medium">Sur la base des {gaps.length} lacunes identifiées pour atteindre les cibles du métier, voici le parcours optimisé :</p>
+                                    
+                                    {moduleIdsToRecommend.map((modId, idx) => {
+                                        const mod = trainingModules[modId];
+                                        const fixesGaps = gaps.filter(g => categoryToModule[g.key] === modId);
+                                        
+                                        return (
+                                            <div key={idx} className="bg-white p-4 rounded-lg flex gap-4 border border-gray-200 shadow-sm">
+                                                <div className="text-inside-purple mt-1 text-xl"><i className="fa-solid fa-book-open"></i></div>
+                                                <div className="w-full">
+                                                    <h5 className="font-bold font-title text-inside-blue text-lg">{mod.title}</h5>
+                                                    <p className="text-sm text-gray-600 mt-1 mb-3">{mod.content}</p>
+                                                    
+                                                    {/* Sources List */}
+                                                    <div className="bg-gray-50 rounded p-3 text-xs space-y-2 mb-3 border border-gray-100">
+                                                        <div className="font-bold text-gray-500 uppercase tracking-wide border-b border-gray-200 pb-1">Sources Disponibles</div>
+                                                        {mod.providers.map((provider, pIdx) => (
+                                                            <div key={pIdx} className="flex flex-col">
+                                                                <div className="flex justify-between items-center mb-1">
+                                                                    <span className="text-inside-black font-bold">{provider.name}</span>
+                                                                    <span className="bg-inside-yellow text-inside-black px-2 py-0.5 rounded text-[10px] font-bold">{provider.type}</span>
+                                                                </div>
+                                                                <span className="text-gray-500 italic">{provider.detail}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="text-[10px] text-gray-500 flex flex-wrap gap-1 items-center">
+                                                        <span className="uppercase font-bold mr-1 text-gray-600">Comble :</span>
+                                                        {fixesGaps.map(g => (
+                                                            <span key={g.key} className="bg-inside-pink/10 text-inside-pink px-2 py-0.5 rounded font-bold border border-inside-pink/20">
+                                                                {formatLabel(g.key)}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row justify-center gap-4 no-print">
+                         <button onClick={handleSendEmail} className="bg-inside-blue hover:bg-opacity-90 px-6 py-3 rounded-lg text-white font-title font-bold transition flex items-center justify-center shadow-md">
+                            <i className="fa-solid fa-envelope mr-2"></i>Envoyer par Mail
+                        </button>
+                        <button onClick={() => window.print()} className="bg-inside-black hover:bg-opacity-80 px-6 py-3 rounded-lg text-white font-title font-bold transition flex items-center justify-center shadow-md">
+                            <i className="fa-solid fa-print mr-2"></i>Sauvegarder en PDF
+                        </button>
+                        <button onClick={onReset} className="text-gray-500 hover:text-inside-pink font-bold px-6 py-3 transition">
+                            Nouvel Audit
+                        </button>
+                    </div>
+
+                    <div className="mt-12 text-center text-xs text-gray-400 font-medium">
+                        Généré par INSIDE Academy • Matrice de compétence V2.0
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [step, setStep] = useState(1);
+            const [selectedRole, setSelectedRole] = useState(null);
+            const [answers, setAnswers] = useState({});
+            const [identity, setIdentity] = useState({ name: '', email: '' });
+
+            const handleRoleSelect = (role) => {
+                setSelectedRole(role);
+                setStep(2);
+                window.scrollTo(0,0);
+            };
+
+            const handleQuizFinish = () => {
+                setStep(3);
+                window.scrollTo(0,0);
+            };
+
+            const reset = () => {
+                setAnswers({});
+                setSelectedRole(null);
+                setIdentity({ name: '', email: '' });
+                setStep(1);
+                window.scrollTo(0,0);
+            };
+
+            return (
+                <div className="min-h-screen p-4 md:p-8">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row items-center justify-between mb-8 max-w-6xl mx-auto border-b border-gray-200 pb-4 gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm flex items-center justify-center w-14 h-14">
+                                <img src="NEW_Inside - logo - blason couleur.png" alt="Logo INSIDE" className="w-full h-full object-contain" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-bold font-title text-inside-black tracking-wide">OPENSTACK <span className="text-inside-pink">ACADEMY</span></h1>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Audit Technique</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <div className={`h-2 w-10 md:w-16 rounded-full transition-colors ${step >= 1 ? 'bg-inside-pink shadow-[0_0_8px_rgba(227,27,88,0.4)]' : 'bg-gray-200'}`}></div>
+                            <div className={`h-2 w-10 md:w-16 rounded-full transition-colors ${step >= 2 ? 'bg-inside-pink shadow-[0_0_8px_rgba(227,27,88,0.4)]' : 'bg-gray-200'}`}></div>
+                            <div className={`h-2 w-10 md:w-16 rounded-full transition-colors ${step >= 3 ? 'bg-inside-pink shadow-[0_0_8px_rgba(227,27,88,0.4)]' : 'bg-gray-200'}`}></div>
+                        </div>
+                    </div>
+
+                    {step === 1 && <StepRole onSelect={handleRoleSelect} identity={identity} setIdentity={setIdentity} />}
+                    {step === 2 && <StepQuiz questions={questions} answers={answers} setAnswers={setAnswers} onFinish={handleQuizFinish} />}
+                    {step === 3 && <StepReport roleKey={selectedRole} answers={answers} identity={identity} onReset={reset} />}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
