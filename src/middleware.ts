@@ -6,8 +6,14 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const userRole = (req.auth?.user as any)?.role;
 
+  // Root redirect: authenticated → dashboard, anonymous → assessment
+  if (pathname === "/") {
+    const target = isLoggedIn ? "/dashboard" : "/assessment";
+    return NextResponse.redirect(new URL(target, req.nextUrl.origin));
+  }
+
   // Public routes - no auth needed
-  const publicPaths = ["/", "/assessment", "/api/auth", "/api/questions", "/api/baselines", "/api/training"];
+  const publicPaths = ["/assessment", "/api/auth", "/api/questions", "/api/baselines", "/api/training"];
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
   if (isPublic) {
