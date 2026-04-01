@@ -160,7 +160,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     const dateStr = new Date().toISOString().slice(0, 10);
     const filename = `INSIDE_Audit_${safeName}_${dateStr}.pdf`;
 
-    return new Response(buffer, {
+    return new Response(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",

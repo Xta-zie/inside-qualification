@@ -31,7 +31,7 @@ export default function StepRole({
     <section className="animate-[fadeIn_0.5s_ease-out] mx-auto max-w-5xl px-4 py-8">
       {/* Step title */}
       <h2 className="font-bebas mb-8 text-center text-3xl tracking-wide text-inside-blue md:text-4xl">
-        1. Definicion du Role Cible
+        1. Définition du Rôle Cible
       </h2>
 
       {/* Identity card */}
@@ -130,7 +130,7 @@ export default function StepRole({
                   <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-inside-blue/10 px-1.5 text-inside-blue">
                     {axesCount}
                   </span>
-                  <span>axes d&apos;evaluation</span>
+                  <span>axes d&apos;évaluation</span>
                 </div>
 
                 {/* Locked overlay */}
@@ -138,7 +138,7 @@ export default function StepRole({
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-xl bg-white/70 backdrop-blur-sm">
                     <Lock className="h-6 w-6 text-gray-400" />
                     <span className="text-xs font-medium text-gray-500">
-                      Remplissez votre identite
+                      Remplissez votre identité
                     </span>
                   </div>
                 )}

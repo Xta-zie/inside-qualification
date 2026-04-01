@@ -284,7 +284,7 @@ export default function StepReport({
         {/* Left */}
         <div>
           <h1 className="font-display text-3xl tracking-wide text-inside-blue md:text-4xl">
-            Rapport d&apos;Audit de Competences
+            Rapport d&apos;Audit de Compétences
           </h1>
           <p className="mt-1 text-sm text-gray-600">
             Candidat:{" "}
@@ -318,7 +318,7 @@ export default function StepReport({
       {/* ================================================================ */}
       <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="font-dm-sans mb-6 text-lg font-bold text-gray-800">
-          Evaluation des Competences
+          Évaluation des Compétences
         </h2>
 
         {/* Two side-by-side cards */}
@@ -328,7 +328,7 @@ export default function StepReport({
             <div className="mb-3 flex items-center gap-3">
               <Server className="h-5 w-5 text-inside-pink" />
               <h3 className="font-dm-sans text-base font-semibold text-gray-800">
-                Partie 1: Prerequis Techniques
+                Partie 1 : Prérequis Techniques
               </h3>
             </div>
             <div className="mb-3 flex items-center gap-3">
@@ -406,7 +406,7 @@ export default function StepReport({
             <div className="mb-5 flex items-center gap-3">
               <Server className="h-5 w-5 text-inside-pink" />
               <h3 className="font-dm-sans text-base font-bold text-gray-800">
-                Detail Prerequis
+                Détail Prérequis
               </h3>
             </div>
             {prereqGaps.map((item) => (
@@ -419,7 +419,7 @@ export default function StepReport({
             <div className="mb-5 flex items-center gap-3">
               <Cloud className="h-5 w-5 text-inside-blue" />
               <h3 className="font-dm-sans text-base font-bold text-gray-800">
-                Detail OpenStack
+                Détail OpenStack
               </h3>
             </div>
             {openstackGaps.map((item) => (
@@ -442,7 +442,7 @@ export default function StepReport({
             <div className="mb-5 flex items-center gap-3">
               <GraduationCap className="h-5 w-5 text-inside-blue" />
               <h3 className="font-dm-sans text-base font-bold text-gray-800">
-                Plan de Montee en Competences
+                Plan de Montée en Compétences
               </h3>
             </div>
 
@@ -456,7 +456,7 @@ export default function StepReport({
                   Profil Parfait!
                 </h4>
                 <p className="mt-2 max-w-xs text-sm text-gray-500">
-                  Le candidat atteint ou depasse toutes les cibles du profil{" "}
+                  Le candidat atteint ou dépasse toutes les cibles du profil{" "}
                   <span className="font-semibold">{roleLabel}</span>.
                 </p>
               </div>
@@ -602,7 +602,7 @@ export default function StepReport({
       {/* ================================================================ */}
       <footer className="border-t border-gray-200 pt-4 text-center">
         <p className="text-xs text-gray-400">
-          <img src="/images/logos/academy-picto.png" alt="" className="h-5 w-5 inline-block mr-1" />Genere par INSIDE Academy &bull; Matrice de competence V2.0
+          <img src="/images/logos/academy-picto.png" alt="" className="h-5 w-5 inline-block mr-1" />Généré par INSIDE Academy &bull; Matrice de compétences V2.0
         </p>
       </footer>
     </section>

@@ -207,7 +207,7 @@ export default function AdminTrainingPage() {
     for (const p of form.providers) {
       if (!p.name.trim() || !p.type.trim() || !p.detail.trim()) {
         setFormError(
-          "Chaque fournisseur doit avoir un nom, un type et un detail.",
+          "Chaque fournisseur doit avoir un nom, un type et un détail.",
         );
         return;
       }
@@ -288,7 +288,7 @@ export default function AdminTrainingPage() {
             Gestion des Modules de Formation
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Creer, modifier et supprimer les modules de formation
+            Créer, modifier et supprimer les modules de formation
           </p>
         </div>
         <Button
@@ -360,7 +360,7 @@ export default function AdminTrainingPage() {
                 {mod.linkedQuestionKeys.length > 0 && (
                   <div>
                     <p className="mb-1 text-xs font-medium text-gray-500">
-                      Competences liees
+                      Compétences liées
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {mod.linkedQuestionKeys.map((key) => (
@@ -388,7 +388,7 @@ export default function AdminTrainingPage() {
                           <tr className="bg-gray-50 text-left text-gray-500">
                             <th className="px-2 py-1 font-medium">Nom</th>
                             <th className="px-2 py-1 font-medium">Type</th>
-                            <th className="px-2 py-1 font-medium">Detail</th>
+                            <th className="px-2 py-1 font-medium">Détail</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -481,7 +481,7 @@ export default function AdminTrainingPage() {
 
               {/* Linked question keys */}
               <div>
-                <Label>Competences liees</Label>
+                <Label>Compétences liées</Label>
                 <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {allQuestionKeys.map((key) => (
                     <label
@@ -529,7 +529,7 @@ export default function AdminTrainingPage() {
                           className="text-sm"
                         />
                         <Input
-                          placeholder="Detail"
+                          placeholder="Détail"
                           value={prov.detail}
                           onChange={(e) =>
                             updateProvider(idx, "detail", e.target.value)
@@ -571,7 +571,7 @@ export default function AdminTrainingPage() {
                 className="bg-[#00548c] text-white hover:bg-[#004070]"
               >
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingModule ? "Enregistrer" : "Creer"}
+                {editingModule ? "Enregistrer" : "Créer"}
               </Button>
             </div>
           </div>
@@ -588,7 +588,7 @@ export default function AdminTrainingPage() {
               Confirmer la suppression
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              Etes-vous sur de vouloir supprimer le module{" "}
+              Êtes-vous sûr de vouloir supprimer le module{" "}
               <span className="font-semibold text-[#00548c]">
                 {deleteTarget.title}
               </span>{" "}

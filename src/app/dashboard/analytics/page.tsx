@@ -201,7 +201,7 @@ export default function AnalyticsPage() {
             style={{ borderTopColor: BLUE }}
           />
           <p className="text-sm text-gray-500">
-            Chargement des donnees...
+            Chargement des données...
           </p>
         </div>
       </div>
@@ -236,7 +236,7 @@ export default function AnalyticsPage() {
         </div>
         <div>
           <h2 className="text-lg font-semibold text-gray-900">
-            Aucune evaluation disponible
+            Aucune évaluation disponible
           </h2>
           <p className="mt-1 text-sm text-gray-500">
             Les analytiques apparaitront ici une fois les premieres
@@ -264,7 +264,7 @@ export default function AnalyticsPage() {
           Analytiques
         </h1>
         <p className="mt-1 text-sm text-gray-500">
-          Analyse globale des competences
+          Analyse globale des compétences
         </p>
       </div>
 
@@ -284,7 +284,7 @@ export default function AnalyticsPage() {
             accent={PURPLE}
           />
           <StatCard
-            label="Taux de prerequis valides"
+            label="Taux de prérequis validés"
             value={`${stats.prereqRate}%`}
             accent={CYAN}
           />
@@ -428,7 +428,7 @@ export default function AnalyticsPage() {
       {/* ================================================================= */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-gray-900">
-          Heatmap des competences (20 dernieres evaluations)
+          Heatmap des compétences (20 dernières évaluations)
         </h3>
         <SkillsHeatmap
           data={heatmapData.rows}
@@ -483,7 +483,7 @@ function ChartCard({
 function EmptyChart() {
   return (
     <div className="flex h-[280px] items-center justify-center text-sm text-gray-400">
-      Pas assez de donnees pour afficher ce graphique.
+      Pas assez de données pour afficher ce graphique.
     </div>
   );
 }

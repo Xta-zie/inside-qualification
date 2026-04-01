@@ -28,7 +28,7 @@ function SignInContent() {
             Connexion
           </h2>
           <p className="text-center text-gray-500 text-sm mb-8">
-            Connectez-vous pour acceder au tableau de bord et a l&apos;administration.
+            Connectez-vous pour accéder au tableau de bord et à l&apos;administration.
           </p>
 
           {/* Google Sign In */}
@@ -64,12 +64,40 @@ function SignInContent() {
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
+          {/* Dev: Test accounts */}
+          <div className="space-y-2 mb-6">
+            <p className="text-xs text-gray-400 text-center font-medium uppercase">Comptes de test</p>
+            {[
+              { email: "admin@inside.fr", label: "Admin", color: "bg-red-50 border-red-200 text-red-700 hover:bg-red-100" },
+              { email: "manager@inside.fr", label: "Manager", color: "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100" },
+              { email: "user@inside.fr", label: "User", color: "bg-green-50 border-green-200 text-green-700 hover:bg-green-100" },
+            ].map((account) => (
+              <button
+                key={account.email}
+                onClick={() =>
+                  signIn("credentials", { email: account.email, callbackUrl })
+                }
+                className={`w-full flex items-center justify-between border rounded-lg px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer ${account.color}`}
+              >
+                <span>{account.label}</span>
+                <span className="text-xs opacity-70">{account.email}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Separator */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex-1 h-px bg-gray-200"></div>
+            <span className="text-xs text-gray-400 uppercase font-medium">ou</span>
+            <div className="flex-1 h-px bg-gray-200"></div>
+          </div>
+
           {/* Anonymous access */}
           <Link
             href="/assessment"
             className="block w-full text-center bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-600 text-sm font-medium hover:bg-gray-100 transition-colors"
           >
-            Passer une evaluation sans compte
+            Passer une évaluation sans compte
           </Link>
         </div>
 

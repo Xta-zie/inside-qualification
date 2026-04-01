@@ -59,7 +59,7 @@ export default function StepQuiz({
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-bebas text-xl md:text-2xl text-inside-blue tracking-wide">
-              2. Evaluation des Competences ({progress}%)
+              2. Évaluation des Compétences ({progress}%)
             </h2>
             <span className="text-sm font-medium text-gray-500">
               {answeredCount}/{totalQuestions}
@@ -87,7 +87,7 @@ export default function StepQuiz({
               {idx === 0 && (
                 <div className="border-l-4 border-inside-pink pl-4 py-2 mb-4">
                   <h3 className="font-bebas text-lg md:text-xl text-gray-800 tracking-wide">
-                    Partie 1 : Prerequis Techniques
+                    Partie 1 : Prérequis Techniques
                   </h3>
                 </div>
               )}
@@ -199,7 +199,7 @@ export default function StepQuiz({
             )}
           >
             <PieChart className="w-5 h-5" />
-            Generer le rapport
+            Générer le rapport
           </button>
         </div>
       </div>

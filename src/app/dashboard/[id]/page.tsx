@@ -56,10 +56,10 @@ function NotFound() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
       <h2 className="font-bebas text-3xl tracking-wide text-inside-blue">
-        Evaluation non trouvee
+        Évaluation non trouvée
       </h2>
       <p className="mt-2 text-sm text-gray-500">
-        Cette evaluation n&apos;existe pas ou a ete supprimee.
+        Cette évaluation n&apos;existe pas ou a été supprimée.
       </p>
       <Link
         href="/dashboard"
@@ -156,7 +156,7 @@ export default function AssessmentDetailPage() {
 
   const handleDelete = useCallback(async () => {
     const confirmed = window.confirm(
-      "Etes-vous sur de vouloir supprimer cette evaluation ? Cette action est irreversible.",
+      "Êtes-vous sûr de vouloir supprimer cette évaluation ? Cette action est irréversible.",
     );
     if (!confirmed) return;
 
@@ -166,10 +166,10 @@ export default function AssessmentDetailPage() {
       if (res.ok || res.status === 204) {
         router.push("/dashboard");
       } else {
-        alert("Erreur lors de la suppression. Veuillez reessayer.");
+        alert("Erreur lors de la suppression. Veuillez réessayer.");
       }
     } catch {
-      alert("Erreur lors de la suppression. Veuillez reessayer.");
+      alert("Erreur lors de la suppression. Veuillez réessayer.");
     } finally {
       setDeleting(false);
     }

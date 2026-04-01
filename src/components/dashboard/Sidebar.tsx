@@ -61,7 +61,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     href: "/assessment",
-    label: "Nouvelle evaluation",
+    label: "Nouvelle évaluation",
     icon: <PlusCircle className="h-5 w-5" />,
   },
 ];
@@ -178,7 +178,7 @@ export function Sidebar({ user }: { user: UserInfo }) {
           onClick={() => signOut({ callbackUrl: "/" })}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Se deconnecter
+          Se déconnecter
         </Button>
       </div>
     </>

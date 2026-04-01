@@ -250,7 +250,7 @@ export default function AdminUsersPage() {
             Gestion des Utilisateurs
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            {total} utilisateur{total !== 1 ? "s" : ""} enregistre
+            {total} utilisateur{total !== 1 ? "s" : ""} enregistré
             {total !== 1 ? "s" : ""}
           </p>
         </div>
@@ -285,8 +285,8 @@ export default function AdminUsersPage() {
             <User className="mb-2 h-10 w-10" />
             <p className="text-sm">
               {search
-                ? "Aucun utilisateur ne correspond a votre recherche."
-                : "Aucun utilisateur enregistre."}
+                ? "Aucun utilisateur ne correspond à votre recherche."
+                : "Aucun utilisateur enregistré."}
             </p>
           </div>
         ) : (
@@ -415,7 +415,7 @@ export default function AdminUsersPage() {
               disabled={page <= 1}
               onClick={() => fetchUsers(page - 1)}
             >
-              Precedent
+              Précédent
             </Button>
             <Button
               variant="outline"

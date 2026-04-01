@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import StepRole from "@/components/assessment/StepRole";
-import { StepQuiz } from "@/components/assessment/StepQuiz";
-import { StepReport } from "@/components/assessment/StepReport";
+import StepQuiz from "@/components/assessment/StepQuiz";
+import StepReport from "@/components/assessment/StepReport";
 import type {
   QuestionData,
   BaselineData,
@@ -90,7 +90,7 @@ export default function AssessmentPage() {
         ]);
 
         if (!questionsRes.ok || !baselinesRes.ok || !trainingRes.ok) {
-          throw new Error("Erreur lors du chargement des donnees de reference");
+          throw new Error("Erreur lors du chargement des données de référence");
         }
 
         const [questionsJson, baselinesJson, trainingJson] = await Promise.all([
@@ -122,9 +122,7 @@ export default function AssessmentPage() {
   }, []);
 
   const handleQuizFinish = useCallback(
-    async (quizAnswers: AnswerMap) => {
-      setAnswers(quizAnswers);
-
+    async () => {
       try {
         const res = await fetch("/api/assessments", {
           method: "POST",
@@ -133,25 +131,24 @@ export default function AssessmentPage() {
             candidateName: identity.name,
             candidateEmail: identity.email,
             targetRole: selectedRole,
-            answers: quizAnswers,
+            answers,
           }),
         });
 
         if (!res.ok) {
-          throw new Error("Erreur lors de la sauvegarde de l'evaluation");
+          throw new Error("Erreur lors de la sauvegarde de l'évaluation");
         }
 
         const json = await res.json();
         setAssessmentId(json.data?.id ?? json.id ?? null);
       } catch (err) {
-        // Allow the user to still see the report even if saving fails
         console.error("Failed to save assessment:", err);
       }
 
       setStep(3);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [identity, selectedRole],
+    [identity, selectedRole, answers],
   );
 
   const handleReset = useCallback(() => {
@@ -170,7 +167,7 @@ export default function AssessmentPage() {
         <div className="text-center">
           <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-inside-blue" />
           <p className="text-sm text-gray-500">
-            Chargement des donnees d&apos;evaluation...
+            Chargement des données d&apos;évaluation...
           </p>
         </div>
       </div>
@@ -188,7 +185,7 @@ export default function AssessmentPage() {
             onClick={() => window.location.reload()}
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
           >
-            Reessayer
+            Réessayer
           </button>
         </div>
       </div>
@@ -228,27 +225,35 @@ export default function AssessmentPage() {
 
       {step === 2 && selectedRole && (
         <StepQuiz
-          questions={questions}
-          baseline={currentBaseline ?? null}
-          roleName={currentBaseline?.label ?? selectedRole}
+          questions={questions.map((q) => ({
+            id: q.id,
+            key: q.key,
+            category: q.category,
+            levels: q.levels as string[],
+            sortOrder: q.sortOrder,
+          }))}
+          answers={answers}
+          setAnswers={setAnswers}
           onFinish={handleQuizFinish}
-          onBack={() => {
-            setStep(1);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
         />
       )}
 
       {step === 3 && selectedRole && (
         <StepReport
-          identity={identity}
-          targetRole={selectedRole}
-          roleName={currentBaseline?.label ?? selectedRole}
+          roleKey={selectedRole}
+          roleLabel={currentBaseline?.label ?? selectedRole}
+          targets={currentBaseline?.targets ?? {}}
           answers={answers}
-          baseline={currentBaseline ?? null}
-          questions={questions}
-          trainingModules={trainingModules}
-          assessmentId={assessmentId}
+          identity={identity}
+          questions={questions.map((q) => ({ key: q.key, category: q.category }))}
+          trainingModules={trainingModules.map((m) => ({
+            moduleKey: m.moduleKey,
+            title: m.title,
+            content: m.content ?? "",
+            linkedQuestionKeys: m.linkedQuestionKeys ?? [],
+            providers: m.providers ?? [],
+          }))}
+          assessmentId={assessmentId ?? undefined}
           onReset={handleReset}
         />
       )}

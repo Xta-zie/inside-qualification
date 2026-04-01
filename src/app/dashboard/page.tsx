@@ -288,7 +288,7 @@ export default function DashboardPage() {
           color="#8883f0"
         />
         <StatCard
-          label="Role le plus evalue"
+          label="Rôle le plus évalué"
           value={stats.topRole}
           icon={Users}
           color="#e31b58"
@@ -377,7 +377,7 @@ export default function DashboardPage() {
               </th>
               <th className="px-4 py-3 font-semibold text-gray-600">Score</th>
               <th className="px-4 py-3 font-semibold text-gray-600">
-                Prerequis
+                Prérequis
               </th>
               <th className="px-4 py-3 font-semibold text-gray-600">
                 OpenStack
@@ -401,7 +401,7 @@ export default function DashboardPage() {
                   colSpan={8}
                   className="py-16 text-center text-sm text-gray-500"
                 >
-                  Aucune evaluation trouvee
+                  Aucune évaluation trouvée
                 </td>
               </tr>
             ) : (
@@ -451,7 +451,7 @@ export default function DashboardPage() {
                     <Link
                       href={`/dashboard/${a.id}`}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-[#00548c]/10 hover:text-[#00548c]"
-                      title="Voir le detail"
+                      title="Voir le détail"
                     >
                       <Eye className="h-4 w-4" />
                     </Link>
@@ -469,7 +469,7 @@ export default function DashboardPage() {
           <p className="text-sm text-gray-500">
             Page {page} sur {totalPages}{" "}
             <span className="text-gray-400">
-              ({total} evaluation{total > 1 ? "s" : ""})
+              ({total} évaluation{total > 1 ? "s" : ""})
             </span>
           </p>
           <div className="flex items-center gap-2">
@@ -479,7 +479,7 @@ export default function DashboardPage() {
               className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
-              Precedent
+              Précédent
             </button>
             <button
               disabled={page >= totalPages}

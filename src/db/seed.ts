@@ -1,5 +1,5 @@
 import { db } from './index';
-import { questions, baselines, trainingModules } from './schema';
+import { users, questions, baselines, trainingModules } from './schema';
 
 // ============================================================================
 // Seed data
@@ -359,6 +359,25 @@ async function seed() {
   console.log("--- Starting database seed ---\n");
 
   try {
+    // ----- Test Users -----
+    const testUsers = [
+      { id: "test-admin-001", name: "Admin INSIDE", email: "admin@inside.fr", role: "admin" as const },
+      { id: "test-manager-001", name: "Manager INSIDE", email: "manager@inside.fr", role: "manager" as const },
+      { id: "test-user-001", name: "User INSIDE", email: "user@inside.fr", role: "user" as const },
+    ];
+    console.log(`Seeding ${testUsers.length} test users...`);
+    for (const u of testUsers) {
+      await db
+        .insert(users)
+        .values(u)
+        .onConflictDoUpdate({
+          target: users.email,
+          set: { name: u.name, role: u.role },
+        });
+      console.log(`  [user] ${u.email} (${u.role})`);
+    }
+    console.log("Test users seeded.\n");
+
     // ----- Questions -----
     console.log(`Seeding ${questionsData.length} questions...`);
     for (const q of questionsData) {

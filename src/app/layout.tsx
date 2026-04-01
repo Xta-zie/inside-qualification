@@ -6,7 +6,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "INSIDE Qualification - OpenStack Skills Gap Analysis",
   description:
-    "Plateforme d'analyse des competences OpenStack pour INSIDE",
+    "Plateforme d'analyse des compétences OpenStack pour INSIDE",
   icons: {
     icon: "/favicon.png",
   },
